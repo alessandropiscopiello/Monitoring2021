@@ -47,3 +47,40 @@ Error in bubble(meuse, "lead", col = red) : oggetto "red" non trovato
 Errore: unexpected string constant in "bubble(meuse, "lead", col"red""
 > bubble(meuse, "lead", col="red")
 > 
+> library(ggplot2)
+> 
+> #ecological dataframe construction
+> #biofuels
+> 
+> 
+> biofuels <- c(120, 200, 350, 570, 750)
+> 
+> oxydative <- c(1200, 1300, 21000, 34000, 50000)
+> 
+> biofuels
+[1] 120 200 350 570 750
+> oxydative
+[1]  1200  1300 21000 34000 50000
+> d<- data.frame(biofuels, oxydative)
+> d
+  biofuels oxydative
+1      120      1200
+2      200      1300
+3      350     21000
+4      570     34000
+5      750     50000
+> ggplot(d, aes(x=biofuels,y=oxydative))
+> ggplot(d, aes(x=biofuels,y=oxydative)) + geom_point()
+> ggplot(d, aes(x=biofuels,y=oxydative)) + geom_point(size=5.col="red")
+Errore: unexpected symbol in "ggplot(d, aes(x=biofuels,y=oxydative)) + geom_point(size=5.col"
+> ggplot(d, aes(x=biofuels,y=oxydative)) + geom_point(size=5,col="red")
+> 
+> #lines
+> ggplot(d, aes(x=biofuels,y=oxydative)) + geom_line()
+> #all
+> ggplot(d, aes(x=biofuels,y=oxydative)) + geom_point(size=5,col="red")+geom_line()
+> #poligons
+> ggplot(d, aes(x=biofuels,y=oxydative)) + geom_polygon()
+> 
+> ##############IMPORT DATA FROM AN EXTERNAL DIRECTORY
+> setwd("C:/lab/")
