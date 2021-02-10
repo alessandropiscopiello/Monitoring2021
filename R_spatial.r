@@ -84,3 +84,40 @@ Errore: unexpected symbol in "ggplot(d, aes(x=biofuels,y=oxydative)) + geom_poin
 > 
 > ##############IMPORT DATA FROM AN EXTERNAL DIRECTORY
 > setwd("C:/lab/")
+wd("C:/lab/")
+> covid
+Errore: oggetto "covid" non trovato
+> covid<-read.table("covid_agg.csv", header=TRUE)
+> covid
+
+> head(covid)
+  cat             country cases       lat        lon
+1   1         Afghanistan    21  33.83890  66.026530
+2   2             Albania    51  41.14596  20.069178
+3   3             Algeria    49  28.16336   2.632366
+4   4             Andorra    14  42.54858   1.575688
+5   5 Antigua and Barbuda     1  17.28014 -61.791128
+6   6           Argentina    56 -35.37667 -65.167485
+> covid
+
+> summary(covid)
+      cat           country              cases              lat         
+ Min.   :  1.00   Length:152         Min.   :    1.0   Min.   :-41.837  
+ 1st Qu.: 38.75   Class :character   1st Qu.:    4.0   1st Qu.:  7.878  
+ Median : 76.50   Mode  :character   Median :   24.5   Median : 25.668  
+ Mean   : 76.50                      Mean   : 1135.7   Mean   : 24.027  
+ 3rd Qu.:114.25                      3rd Qu.:  133.2   3rd Qu.: 43.965  
+ Max.   :152.00                      Max.   :81116.0   Max.   : 64.998  
+      lon         
+ Min.   :-149.57  
+ 1st Qu.: -10.48  
+ Median :  15.28  
+ Mean   :  11.55  
+ 3rd Qu.:  43.97  
+ Max.   : 171.60  
+> #ggplot2 for graphs
+> #ggplot(covid, aes(x=lon,y=lat)) + geom_point()
+> library(ggplot2)
+> ggplot(covid, aes(x=lon,y=lat)) + geom_point()
+> #change the size of data
+> ggplot(covid, aes(x=lon,y=lat,size=cases)) + geom_point()
