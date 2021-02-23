@@ -4,19 +4,19 @@
 #####I want to create a graph to show the global temperature change from the first relevations to the last year
 
 ######First of all I need data like this: https://crudata.uea.ac.uk/cru/data/temperature/HadCRUT4-gl.dat (from: http://www.cru.uea.ac.uk/cru/data/temperature)
-######Second, I need a particular function to read this data
-##### read_cru_hemi.r is the function to read a CRU-global/hemispheric (in this case global) average data file format!
+######Second, I need an appropriate function to read this data:
+###### read_cru_hemi.r is the function to read a CRU-global/hemispheric (in this case global) average data file format!
 #
 # The format of this file consists of two lines for each year:
 # 1) monthly mean anomalies plus an annual mean
 # 2) coverage percentages
 #
 # So in the data frame I have this columns:
-# year (1850 to final year) - I have two rows for each year
-# annual (mean annual anomaly) - Is the last column
+# year (1850 to final year-2020) - I have two rows for each year
+# annual (mean annual anomaly) - It's the last column
 # From column 1 to column 12 I have alternatively on the rows:
 # month1...month12 (mean monthly anomaly)
-# % of coverage 1...% of coverage 12 
+# % of coverage moonth 1...% of coverage month 12
 #
 read_cru_hemi <- function(filename) {
   # read in whole file as table
@@ -45,21 +45,19 @@ read_cru_hemi <- function(filename) {
   #
   return(hemi)
 }
-  
-  
+# 
+
 install.packages("tidyr")
 install.packages("dplyr")
 install.packages("animation")
 library(dplyr)
 library(tidyr)
-library(ggplot2) #this package is already installed
+library(ggplot2)
 library(animation)
-setwd("~/cloud/R/climate change/")
 #Data from https://crudata.uea.ac.uk/cru/data/temperature/
 #As well as data read in script
-source("read_cru_hemi.r")
-url_dat <- "https://crudata.uea.ac.uk/cru/data/temperature/HadCRUT4-gl.dat"
-temp_dat <- read_cru_hemi(url_dat)
+source("read_cru_hemi.R")
+temp_dat <- read_cru_hemi("./HadCRUT4-gl.dat")
 
 #temp_dat <- read_cru_hemi("./HadCRUT4-gl.dat")
 
@@ -76,7 +74,7 @@ mo <- months(seq(as.Date("1910/1/1"), as.Date("1911/1/1"), "months"))
 mo <- gsub("(^...).*", "\\1", mo)
 
 saveGIF({
-  
+
 #  for(i in 1850:2015){
   for(i in 1850:2020){
     print(ggplot(temp_dat_monthly %>% filter(year <= i), 
@@ -95,8 +93,9 @@ saveGIF({
         scale_x_continuous(labels=mo, breaks=1:13) +
         scale_y_continuous(labels=NULL, breaks=NULL) +
          ylab("") + xlab("")
-       
+
   )}
 }, interval=0.1)
-  
-  
+
+
+######
