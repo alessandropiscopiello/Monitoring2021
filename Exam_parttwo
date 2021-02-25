@@ -97,7 +97,8 @@ plot(CovDIFF, col= CLF2, main = "Difference in FCover between 2014 and 2020")
 
 dev.off()
 
-hist(CovDIFF, col="limegreen", xlab="Changes in FCover", main= "FCover histogram")
+#histogram 
+hist(CovDIFF, col="limegreen", xlab="FCover change", main= "FCover histogram")
 #Now I make use of stack function to transform data available as separate columns in a data frame, namely i put togheter a number of layer
 FCOVER <- stack(Fcov2014, Fcov2020)
 plot(FCOVER)
@@ -105,7 +106,7 @@ boxplot(FCOVER,vertical=T,axes=T,outline=F, col="limegreen",ylab="FCOVER", xlab=
 
 #plot histogram and boxplot together, and save
 par(mfrow=c(1,2))
-hist(CovDIFF, col="limegreen", xlab="Changes in FCover", main= "FCover histogram")
+hist(CovDIFF, col="limegreen", xlab="FCover change", main= "FCover histogram")
 boxplot(FCOVER,vertical=T,axes=T,outline=F, col="limegreen",ylab="FCOVER", xlab="Year", main="FCover Boxplot")
 
 
