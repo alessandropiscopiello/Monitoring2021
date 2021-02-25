@@ -104,7 +104,7 @@ FCOVER <- stack(Fcov2014, Fcov2020)
 plot(FCOVER)
 boxplot(FCOVER,vertical=T,axes=T,outline=F, col="limegreen",ylab="FCOVER", xlab="Year", main="FCover Boxplot")
 
-#plot histogram and boxplot together, and save
+#plotting histogram and boxplot together, then saving it
 par(mfrow=c(1,2))
 hist(CovDIFF, col="limegreen", xlab="FCover change", main= "FCover histogram")
 boxplot(FCOVER,vertical=T,axes=T,outline=F, col="limegreen",ylab="FCOVER", xlab="Year", main="FCover Boxplot")
