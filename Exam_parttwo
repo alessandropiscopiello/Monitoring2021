@@ -6,23 +6,23 @@
 #understand the consequences of the fires during the last summer (2020)
 
 
-# to read the copernicus data I have to install a package and to use "" in order to let R know to import them since they are external.
+#to read the copernicus data I have to install a package and to use "" in order to let R know to import them since they are external.
 install.packages("ncdf4") 
 #to recall the package installed, I need to use the function library 
 library(ncdf4)
 
-#I'm going to install also ggplot2 in order to create graphics 
+#package useful to create graphics 
 install.packages("ggplot2")
-#and recall the package using the function library
 library(ggplot2)
 
-#Another package useful for this analysis is RStoolbox that is used for remote sensing image processing 
+#package useful for remote sensing image processing 
 install.packages("RStoolbox")
 library(RStoolbox)
 
-# Since data are saved in pixels need to install raster package too. In the spatial world, each pixel represents an area on the Earth's surface.
+#data are saved in pixels 
 install.packages("raster")
 library(raster)
+
 #CHANGES IN NDVI (DIC 2014-FEB 2021)
 
 #Setting the working directory and uploading the data
@@ -76,7 +76,7 @@ Fcov2014 <- crop(Fcov2014, ext)
 Fcov2020 <- crop(Fcov2020, ext)
 
 #plotting the images, changing the palette using HEX codes and saving them
-CLF <- colorRampPalette(c('#ADFF2F', '#7FFF00', '#32CD32', '#228B22', '#008000', '#006400'))(100)
+CLF <- colorRampPalette(c("#ADFF2F", "#7FFF00", "#32CD32", "#228B22", "#008000", "#006400"))(100)
 par(mfrow=c(1,2))
 plot(Fcov2014, col=CLF, main="FCover 2014")
 plot(Fcov2020, col=CLF, main="FCover 2020")
@@ -84,7 +84,7 @@ plot(Fcov2020, col=CLF, main="FCover 2020")
 dev.off()
 
 #difference between FCover: jan2020 - jan2014, but I want to change the color palette first
-CLF2 <- colorRampPalette(c('#B2182B','#D6604D','#F4A582','#FDDBC7','#D1E5F0','#92C5DE','#4393C3','#2166AC'))(100)
+CLF2 <- colorRampPalette(c("#B2182B","#D6604D","#F4A582","#FDDBC7","#D1E5F0","#92C5DE","#4393C3","#2166AC"))(100)
 CovDIFF <- Fcov2020 - Fcov2014
 plot(CovDIFF, col= CLF2, main = "Difference in FCover between 2014 and 2020")
 
@@ -97,7 +97,7 @@ plot(CovDIFF, col= CLF2, main = "Difference in FCover between 2014 and 2020")
 
 dev.off()
 
-#histogram 
+#histogram to see in detail
 hist(CovDIFF, col="limegreen", xlab="FCover change", main= "FCover histogram")
 #Now I make use of stack function to transform data available as separate columns in a data frame, namely i put togheter a number of layer
 FCOVER <- stack(Fcov2014, Fcov2020)
@@ -109,7 +109,120 @@ par(mfrow=c(1,2))
 hist(CovDIFF, col="limegreen", xlab="FCover change", main= "FCover histogram")
 boxplot(FCOVER,vertical=T,axes=T,outline=F, col="limegreen",ylab="FCOVER", xlab="Year", main="FCover Boxplot")
 
+dev.off()
 
+#for curiosity, i want to see the effects of fire disturbance in the last two years (in 2018 and 2019 summers there were thousands of fires in the region)
+#importing images
+burn2018 <- raster("c_gls_BA300_201805310000_GLOBE_PROBAV_V1.0.1.nc")
+burn2020 <- raster("c_gls_BA300_202009100000_GLOBE_PROBAV_V1.1.1.nc")
+#changing the color palette 
+CLF <- colorRampPalette(c("yellow", "red", "darkred"))(100)
+#cropping on my region
+ext <- c(16.58,18.62,39.71,41.35) 
+burn2018 <- crop(burn2018, ext)
+burn2020 <- crop(burn2020, ext)
 
+par(mfrow=c(1,2))
+plot(burn2018, col=CLF, main="burned areas before 2018 summer")
+plot(burn2020, col=CLF, main="burned areas after 2020 summer")
 
+dev.off()
 
+###
+#bushfires are strengthened by high temperatures, and we must remember that global mean temperature is increasing, and this have local effects...
+#just for fun, THE SPIDER GRAPH OF GLOBAL TEMPERATURE INCREASE since we have direct relevations
+
+#First of all I need data like this: https://crudata.uea.ac.uk/cru/data/temperature/HadCRUT4-gl.dat (from: http://www.cru.uea.ac.uk/cru/data/temperature)
+#Second, I need an appropriate function to read this data:
+#read_cru_hemi.r is the function to read a CRU-global/hemispheric (in this case global) average data file format!
+
+# The format of this file consists of two lines for each year:
+# 1) monthly mean anomalies plus an annual mean
+# 2) coverage percentages
+
+# So in the data frame I have this columns:
+# year (1850 to final year-2020) - I have two rows for each year
+# annual (mean annual anomaly) - It's the last column
+# From column 1 to column 12 I have alternatively on the rows:
+# month1...month12 (mean monthly anomaly)
+# % of coverage moonth 1...% of coverage month 12
+
+read_cru_hemi <- function(filename) {
+  # read in whole file as table
+  tab <- read.table(filename,fill=TRUE)
+  nrows <- nrow(tab)
+  # create frame
+  hemi <- data.frame(
+    year=tab[seq(1,nrows,2),1],
+    annual=tab[seq(1,nrows,2),14],
+    month=array(tab[seq(1,nrows,2),2:13]),
+    cover=array(tab[seq(2,nrows,2),2:13])
+  )
+  # mask out months with 0 coverage
+  hemi$month.1 [which(hemi$cover.1 ==0)] <- NA
+  hemi$month.2 [which(hemi$cover.2 ==0)] <- NA
+  hemi$month.3 [which(hemi$cover.3 ==0)] <- NA
+  hemi$month.4 [which(hemi$cover.4 ==0)] <- NA
+  hemi$month.5 [which(hemi$cover.5 ==0)] <- NA
+  hemi$month.6 [which(hemi$cover.6 ==0)] <- NA
+  hemi$month.7 [which(hemi$cover.7 ==0)] <- NA
+  hemi$month.8 [which(hemi$cover.8 ==0)] <- NA
+  hemi$month.9 [which(hemi$cover.9 ==0)] <- NA
+  hemi$month.10[which(hemi$cover.10==0)] <- NA
+  hemi$month.11[which(hemi$cover.11==0)] <- NA
+  hemi$month.12[which(hemi$cover.12==0)] <- NA
+  #
+  return(hemi)
+}
+# 
+
+#I need the following packages for data manipulation and animated graphs, and I need ggplot2, since I'm going to create a graph
+install.packages("tidyr")
+install.packages("dplyr")
+install.packages("animation")
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(animation)
+#source of the data
+source("read_cru_hemi.r")
+url_dat <- "https://crudata.uea.ac.uk/cru/data/temperature/HadCRUT4-gl.dat"
+temp_dat <- read_cru_hemi(url_dat)
+
+#temp_dat <- read_cru_hemi("./HadCRUT4-gl.dat")
+
+#remove cover
+temp_dat_monthly <- temp_dat %>%
+  select(-starts_with("cover")) %>%
+  select(-starts_with("annual")) %>%
+  gather(month, anomaly, -year) %>%
+  mutate(month = gsub("month\\.", "", month)) %>%
+  mutate(month = as.numeric(month)) %>%
+  filter(year !=2016)
+
+mo <- months(seq(as.Date("1910/1/1"), as.Date("1911/1/1"), "months"))
+mo <- gsub("(^...).*", "\\1", mo)
+
+#creating a GIF of the animated graph
+saveGIF({
+  
+for(i in 1850:2020){
+print(ggplot(temp_dat_monthly %>% filter(year <= i), 
+aes(x=month, y=anomaly, color=year, group=year)) +
+geom_line() +
+scale_color_gradient(low="blue", high="red", limits=c(1850, 2020), guide="none") +
+geom_hline(yintercept=1.5, color="black", lty=2) +
+geom_hline(yintercept=2, color="black", lty=2) +
+coord_polar() +
+annotate(x=1, y=-1.5, geom="text", label=i) +
+annotate(x=1, y=1.5, geom="label", label="1.5C", fill="white", label.size=0) +
+annotate(x=1, y=2, geom="label", label="2.0C", fill="white", label.size=0) +
+ggtitle(expression(atop("Global Temperature Change 1850-2020, East Anglia's university data", atop(italic("by Alessandro Piscopiello"), "")))) +
+scale_x_continuous(labels=mo, breaks=1:13) +
+scale_y_continuous(labels=NULL, breaks=NULL) +
+         ylab("") + xlab("")
+       
+  )}
+}, interval=0.1)
+
+######################################################################################################################
