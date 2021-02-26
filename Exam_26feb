@@ -50,7 +50,7 @@ plot(ndvi2021, col=NC, main="NDVI 2021")
 dev.off() to close the graphic plot
 
 #difference between NDVI: jan2021 - jan2014
-NDVIdiff <- ndvi2014 - ndvi2021 
+NDVIdiff <- ndvi2021 - ndvi2014 
 plot(NDVIdiff, col=NC, main= "Difference in NDVI between 2014 and 2021")
 
 dev.off() 
@@ -224,5 +224,7 @@ scale_y_continuous(labels=NULL, breaks=NULL) +
        
   )}
 }, interval=0.1)
+
+dev.off()
 
 ######################################################################################################################
