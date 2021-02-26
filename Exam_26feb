@@ -1,12 +1,12 @@
-#THE EFFECTS OF XYLELLA OUTBREAK ON APULIA ECOSYSTEM 
+#THE EFFECTS OF XYLELLA OUTBREAK ON PUGLIA ECOSYSTEM 
 
 #THIS PROJECT AIMS TO :
-#ASSESS THE SEVERITY OF THE XYLELLA OUTBREAK ON VEGETATION AND ECOSYSTEM OF APULIA REGION:
-#understand the consequences on olive trees (most of the Salento tree vegetation)
+#ASSESS THE SEVERITY OF THE XYLELLA OUTBREAK ON VEGETATION AND ECOSYSTEM OF SALENTO (PUGLIA) REGION:
+#understand the consequences on olive trees (most of the Salento vegetation) through NDVI, FCover before and after the "epidemic"
 #understand the consequences of the fires during the last summer (2020)
 
-
-#to read the copernicus data I have to install a package and to use "" in order to let R know to import them since they are external.
+#First of all, I need to install some packages 
+#to read the Copernicus data. I need to use "" since I'm importing something external R.
 install.packages("ncdf4") 
 #to recall the package installed, I need to use the function library 
 library(ncdf4)
@@ -19,30 +19,29 @@ library(ggplot2)
 install.packages("RStoolbox")
 library(RStoolbox)
 
-#data are saved in pixels 
+#package useful to read and manipulate spatial data since I have raster (pixel) data 
 install.packages("raster")
 library(raster)
 
-#CHANGES IN NDVI (DIC 2014-FEB 2021)
+#CHANGES IN NDVI (DEC 2014-FEB 2021)
 
-#Setting the working directory and uploading the data
+#Setting the working directory and uploading the data (source of the data: https://land.copernicus.vgt.vito.be/PDF/portal/Application.html#Home)
 setwd("c:/lab/")
 ndvi2014<-raster("c_gls_NDVI300_201412010000_GLOBE_PROBAV_V1.0.1.nc")
 ndvi2014 #to check for the extension
 ndvi2021<-raster("c_gls_NDVI300_202101010000_GLOBE_OLCI_V2.0.1.nc")
-ndvi 2021 #to check for the extension
+ndvi2021 #to check for the extension
 
 #Cropping Salento region (and something more, of course)
 ext <- c(16.58,18.62,39.71,41.35)  #establish the extent
 ndvi2014 <- crop(ndvi2014, ext)
 ndvi2021 <- crop(ndvi2021, ext)
 
-
 #changing the colors using those from the "greenbrown" package. See more at: https://rdrr.io/rforge/greenbrown/src/R/brgr.colors.R
 NC <- colorRampPalette(c("chocolate4", "orange", "yellow", "grey", "green", "forestgreen", "darkgreen"))(100)
 
 #plotting the images together using the par function
-jpeg('ndvi_2014-2021.jpg') #to save the image, but it's too small, so from now on I will save images with "print on PDF" function and then convert in image
+jpeg('ndvi_2014-2021.jpg') #to save the image. Since it seems to be quite small, from now on I will save images with "print on PDF" function and then convert in image
 par(mfrow=c(1,2))
 plot(ndvi2014, col=NC, main="NDVI 2014")
 plot(ndvi2021, col=NC, main="NDVI 2021")
@@ -55,7 +54,7 @@ plot(NDVIdiff, col=NC, main= "Difference in NDVI between 2014 and 2021")
 
 dev.off() 
 
-#plotting all the images together an saving it
+#plotting all the images together and saving it
 par(mfrow=c(1,3))
 plot(ndvi2014, col=NC, main="NDVI 2014")
 plot(ndvi2021, col=NC, main="NDVI 2021")
@@ -63,10 +62,10 @@ plot(NDVIdiff, col=NC, main= "Difference in NDVI between 2014 and 2021")
 
 dev.off() 
 
-#i'm not so entusiast by the NDVI result, so I try to see what happen with Fcover index
-#FCover 2014-2020 (last year available)
+#I'm not so entusiast by the NDVI result also if I see some differences, so I try to see what happen with Fcover index
+#FCover 2014-2020 (2020 is the last year available)
 
-#importing the data
+#importing the data (source of the data: https://land.copernicus.vgt.vito.be/PDF/portal/Application.html#Home)
 Fcov2014 <- raster("c_gls_FCOVER300_201401100000_GLOBE_PROBAV_V1.0.1.nc")
 Fcov2020 <- raster("c_gls_FCOVER300_202001100000_GLOBE_PROBAV_V1.0.1.nc")
 
@@ -94,15 +93,15 @@ plot(Fcov2014, col=CLF, main="FCover 2014")
 plot(Fcov2020, col=CLF, main="FCover 2020")
 plot(CovDIFF, col= CLF2, main = "Difference in FCover between 2014 and 2020")
 
-
 dev.off()
 
-#histogram to see in detail
+#I'm going to make a histogram to see more in detail through a division of FCover in classes, each with a frequency distribution, namely "to weigh" the FCover change
 hist(CovDIFF, col="limegreen", xlab="FCover change", main= "FCover histogram")
-#Now I make use of stack function to transform data available as separate columns in a data frame, namely i put togheter a number of layer
+#I see a reduction in FCover 
+#Now I make use of stack function to transform data available in the histogram in data usable to create a boxplot
 FCOVER <- stack(Fcov2014, Fcov2020)
 plot(FCOVER)
-boxplot(FCOVER,vertical=T,axes=T,outline=F, col="limegreen",ylab="FCOVER", xlab="Year", main="FCover Boxplot")
+boxplot(FCOVER,vertical=T,axes=T,outline=F, col="limegreen",ylab="FCOVER", xlab="Year", main="FCover Boxplot") #to see the distribution
 
 #plotting histogram and boxplot together, then saving it
 par(mfrow=c(1,2))
@@ -111,12 +110,16 @@ boxplot(FCOVER,vertical=T,axes=T,outline=F, col="limegreen",ylab="FCOVER", xlab=
 
 dev.off()
 
-#for curiosity, i want to see the effects of fire disturbance in the last two years (in 2018 and 2019 summers there were thousands of fires in the region)
-#importing images
+#for curiosity, i want to see the effects of fire disturbance in the last two years (in 2018 and 2019 summers there were thousands of fires in the region,
+#also because of hundreds of hectares of dried olive trees)
+
+#importing the data (source of the data: https://land.copernicus.vgt.vito.be/PDF/portal/Application.html#Home)
 burn2018 <- raster("c_gls_BA300_201805310000_GLOBE_PROBAV_V1.0.1.nc")
 burn2020 <- raster("c_gls_BA300_202009100000_GLOBE_PROBAV_V1.1.1.nc")
+
 #changing the color palette 
 CLF <- colorRampPalette(c("yellow", "red", "darkred"))(100)
+
 #cropping on my region
 ext <- c(16.58,18.62,39.71,41.35) 
 burn2018 <- crop(burn2018, ext)
@@ -130,22 +133,22 @@ dev.off()
 
 ###
 #bushfires are strengthened by high temperatures, and we must remember that global mean temperature is increasing, and this have local effects...
-#just for fun, THE SPIDER GRAPH OF GLOBAL TEMPERATURE INCREASE since we have direct relevations
+#just for fun, I re-create THE SPIDER GRAPH OF GLOBAL TEMPERATURE INCREASE since we have direct temperature relevations
 
 #First of all I need data like this: https://crudata.uea.ac.uk/cru/data/temperature/HadCRUT4-gl.dat (from: http://www.cru.uea.ac.uk/cru/data/temperature)
 #Second, I need an appropriate function to read this data:
 #read_cru_hemi.r is the function to read a CRU-global/hemispheric (in this case global) average data file format!
 
-# The format of this file consists of two lines for each year:
-# 1) monthly mean anomalies plus an annual mean
-# 2) coverage percentages
+#The format of this file consists of two lines for each year:
+#1) monthly mean anomalies plus an annual mean
+#2) coverage percentages
 
-# So in the data frame I have this columns:
-# year (1850 to final year-2020) - I have two rows for each year
-# annual (mean annual anomaly) - It's the last column
-# From column 1 to column 12 I have alternatively on the rows:
-# month1...month12 (mean monthly anomaly)
-# % of coverage moonth 1...% of coverage month 12
+#So in the data frame I have this columns:
+#year (1850 to final year-2020) - I have two rows for each year
+#annual (mean annual anomaly) - It's the last column
+#From column 1 to column 12 I have alternatively on the rows:
+#month1...month12 (mean monthly anomaly)
+#% of coverage moonth 1...% of coverage month 12
 
 read_cru_hemi <- function(filename) {
   # read in whole file as table
@@ -176,10 +179,11 @@ read_cru_hemi <- function(filename) {
 }
 # 
 
-#I need the following packages for data manipulation and animated graphs, and I need ggplot2, since I'm going to create a graph
+#I need the following packages for data tidying and manipulation, and animated graphs, and I need ggplot2, since I'm going to create a graph
 install.packages("tidyr")
 install.packages("dplyr")
 install.packages("animation")
+#recall them
 library(dplyr)
 library(tidyr)
 library(ggplot2)
@@ -203,7 +207,7 @@ temp_dat_monthly <- temp_dat %>%
 mo <- months(seq(as.Date("1910/1/1"), as.Date("1911/1/1"), "months"))
 mo <- gsub("(^...).*", "\\1", mo)
 
-#creating a GIF of the animated graph
+#creating a GIF of the animated graph with the years range
 saveGIF({
   
 for(i in 1850:2020){
@@ -227,4 +231,4 @@ scale_y_continuous(labels=NULL, breaks=NULL) +
 
 dev.off()
 
-######################################################################################################################
+###
