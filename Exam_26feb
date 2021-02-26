@@ -27,9 +27,9 @@ library(raster)
 
 #Setting the working directory and uploading the data (source of the data: https://land.copernicus.vgt.vito.be/PDF/portal/Application.html#Home)
 setwd("c:/lab/")
-ndvi2014<-raster("c_gls_NDVI300_201412010000_GLOBE_PROBAV_V1.0.1.nc")
+ndvi2014 < -raster("c_gls_NDVI300_201412010000_GLOBE_PROBAV_V1.0.1.nc")
 ndvi2014 #to check for the extension
-ndvi2021<-raster("c_gls_NDVI300_202101010000_GLOBE_OLCI_V2.0.1.nc")
+ndvi2021 <- raster("c_gls_NDVI300_202101010000_GLOBE_OLCI_V2.0.1.nc")
 ndvi2021 #to check for the extension
 
 #Cropping Salento region (and something more, of course)
@@ -106,7 +106,7 @@ boxplot(FCOVER,vertical=T,axes=T,outline=F, col="limegreen",ylab="FCOVER", xlab=
 #plotting histogram and boxplot together, then saving it
 par(mfrow=c(1,2))
 hist(CovDIFF, col="limegreen", xlab="FCover change", main= "FCover histogram")
-boxplot(FCOVER,vertical=T,axes=T,outline=F, col="limegreen",ylab="FCOVER", xlab="Year", main="FCover Boxplot")
+boxplot(FCOVER, vertical=T, axes=T, outline=F, col="limegreen", ylab="FCOVER", xlab="Year", main="FCover Boxplot")
 
 dev.off()
 
