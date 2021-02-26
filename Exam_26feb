@@ -3,7 +3,7 @@
 #THIS PROJECT AIMS TO :
 #ASSESS THE SEVERITY OF THE XYLELLA OUTBREAK ON VEGETATION AND ECOSYSTEM OF SALENTO (PUGLIA) REGION:
 #understand the consequences on olive trees (most of the Salento vegetation) through NDVI, FCover before and after the "epidemic"
-#understand the consequences of the fires during the last summer (2020)
+#understand the consequences of the fires during the last summer seasons
 
 #First of all, I need to install some packages 
 #to read the Copernicus data. I need to use "" since I'm importing something external R.
